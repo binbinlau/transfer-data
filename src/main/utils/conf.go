@@ -12,7 +12,7 @@ type conf struct {
 }
 
 func (c *conf) getConf() *conf {
-	yamlFile, err := ioutil.ReadFile("../resource/conf.yaml")
+	yamlFile, err := ioutil.ReadFile(GetConfPath("", "conf.yaml"))
 	if err != nil {
 		log.Printf("yamlFile.Get err   #%v ", err)
 	}

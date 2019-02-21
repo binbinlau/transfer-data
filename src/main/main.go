@@ -8,9 +8,8 @@ import (
 
 func main() {
 	var appPath string
-	flag.StringVar(&appPath, "app-path", utils.GetAppPath(), "111")
+	flag.StringVar(&appPath, "app-path", utils.GetRootPath(), "111")
 	flag.Parse()
 	fmt.Printf("App path: %s \n", appPath)
-	fmt.Printf("Conf is: %v \n", utils.GetConf())
-	fmt.Printf(utils.GetConfPath("", ""))
+	fmt.Printf("Conf is: %v \n", utils.Conf.Mysql.User)
 }

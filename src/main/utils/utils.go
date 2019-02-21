@@ -15,6 +15,20 @@ func GetAppPath() string {
 	return path[:index]
 }
 
+func GetRootPath() string {
+	var err error
+	workPath, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	path, _ := filepath.Abs(workPath)
+	index := strings.LastIndex(path, "src") //src文件在项目根目录下面,作为查找项目根路径的标记，所有的代码也必须在src下，以后修改，可以加到环境变量里
+	if index < 0 {
+		return path
+	}
+	return path[:index]
+}
+
 func GetConfPath(filedir string, filename string) string {
 	var err error
 	var appPath, appConfigPath string

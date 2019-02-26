@@ -7,5 +7,5 @@ import (
 
 func TestA(t *testing.T) {
 	t.Log("A")
-	t.Log(utils.GetConf())
+	t.Log(utils.Conf)
 }

@@ -1,14 +1,14 @@
-package main
+package mysql
 
 import (
 	"database/sql"
 	"fmt"
 	"github.com/binsix/transfer-data/src/main/utils"
-	_ "github.com/go-sql-driver/mysql"
+	"reflect"
 )
 
-func GetSession() (*sql.DB, error) {
-	return Connec(utils.Conf.Mysql.User, utils.Conf.Mysql.Password, utils.Conf.Mysql.Collection)
+func getSession() (*sql.DB, error) {
+	return Connec(utils.Conf.Mysql.User, utils.Conf.Mysql.Password, utils.Conf.Mysql.Database)
 }
 
 func Connec(user string, passwd string, collection string) (*sql.DB, error) {
@@ -19,10 +19,14 @@ func Connec(user string, passwd string, collection string) (*sql.DB, error) {
 	return db, err
 }
 
-func GetList() {
-	db, err := GetSession()
+func test() {
+	Connec("1", "2", "3")
+}
+
+func GetList(table string) {
+	db, err := getSession()
 	defer db.Close()
-	rows, err := db.Query("SELECT * FROM class")
+	rows, err := db.Query("SELECT * FROM" + table)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -56,54 +60,27 @@ func GetList() {
 	}
 }
 
-// func GetOne(id int) (interface{}) {
+func GetOne(id string, obj interface{}, table string) interface{} {
+	getType := reflect.TypeOf(obj)
+	fmt.Println("get Type is :", getType.Name())
+	getValue := reflect.ValueOf(obj)
+	fmt.Println("get all Fields is:", getValue)
+	for i := 0; i < getType.NumField(); i++ {
+		field := getType.Field(i)
+		value := getValue.Field(i).Interface()
+		fmt.Printf("%s: %v = %v\n", field.Name, field.Type, value)
+	}
 
-// }
-
-func main() {
-	// db, err := sql.Open("mysql", "root:123456@/test")
-	// if err != nil {
-	// 	panic(err.Error())  // Just for example purpose. You should use proper error handling instead of panic
-	// }
-	// defer db.Close()
-	db, err := GetSession()
-	defer db.Close()
-	// Prepare statement for inserting data
-	// stmtIns, err := db.Prepare("INSERT INTO class VALUES( ?, ? )") // ? = placeholder
-	// if err != nil {
-	// 	panic(err.Error()) // proper error handling instead of panic in your app
-	// }
-	// defer stmtIns.Close() // Close the statement when we leave main() / the program terminates
-
-	// Prepare statement for reading data
-	stmtOut, err := db.Prepare("SELECT name FROM class WHERE id = ?")
+	db, err := getSession()
+	stmtOut, err := db.Prepare("SELECT * FROM" + table + "WHERE id = ?")
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	defer stmtOut.Close()
-
-	// Insert square numbers for 0-24 in the database
-	// for i := 0; i < 25; i++ {
-	// 	_, err = stmtIns.Exec(i, (i * i)) // Insert tuples (i, i^2)
-	// 	if err != nil {
-	// 		panic(err.Error()) // proper error handling instead of panic in your app
-	// 	}
-	// }
-
-	var squareNum int // we "scan" the result in here
-
-	// Query the square-number of 13
-	err = stmtOut.QueryRow(13).Scan(&squareNum) // WHERE number = 13
+	var squareNum string
+	err = stmtOut.QueryRow(id).Scan(&squareNum) // WHERE number = 13
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
-	fmt.Printf("The square number of 13 is: %d", squareNum)
-
-	// Query another number.. 1 maybe?
-	err = stmtOut.QueryRow(1).Scan(&squareNum) // WHERE number = 1
-	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
-	}
-	fmt.Printf("The square number of 1 is: %d", squareNum)
-	GetList()
+	return obj
 }

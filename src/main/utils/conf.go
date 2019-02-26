@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -9,13 +10,19 @@ import (
 
 type conf struct {
 	Mysql struct {
-		User       string `yaml:"user"`
-		Password   string `yaml:"password"`
-		Collection string `yaml:"collection"`
+		User     string `yaml:"user"`
+		Password string `yaml:"password"`
+		Database string `yaml:"database"`
+		Charset  string `yaml: "charset"`
 	} `yaml:"mysql"`
-}
 
-var Conf = GetConf()
+	Logger struct {
+		ShowSQL bool   `yaml: "showsql"`
+		Level   string `yaml: "level"`
+	} `yaml:"logger"`
+
+	MysqlMapperDirPath string `yaml: "mysqlMapperDirPath"`
+}
 
 func (c *conf) getConf() *conf {
 	rootdir := GetRootPath()
@@ -30,11 +37,14 @@ func (c *conf) getConf() *conf {
 	return c
 }
 
-// func (c *conf) Get(prop string) string {
-// 	return GetConf().
-// }
+var Conf *conf
 
-func GetConf() *conf {
+func init() {
+	Conf = getConf()
+	fmt.Println("conf is %v", Conf)
+}
+
+func getConf() *conf {
 	var resourceConf conf
 	return resourceConf.getConf()
 }

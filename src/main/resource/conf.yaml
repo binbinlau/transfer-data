@@ -2,6 +2,13 @@
 mysql:
   user: root
   password: 123456
-  collection: test
+  database: test
+  charset: utf8
+
+logger:
+  showsql: true
+  level : Debug
+
+mysqlMapperDirPath: src/main/mysql/entity 
 
   

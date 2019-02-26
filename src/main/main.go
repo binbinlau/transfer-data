@@ -11,5 +11,5 @@ func main() {
 	flag.StringVar(&appPath, "app-path", utils.GetRootPath(), "111")
 	flag.Parse()
 	fmt.Printf("App path: %s \n", appPath)
-	fmt.Printf("Conf is: %v \n", utils.Conf.Mysql.User)
+	fmt.Printf("Conf is: %v \n", utils.Conf.Mysql)
 }
